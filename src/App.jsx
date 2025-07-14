@@ -1,4 +1,4 @@
-// MINI TRELLO - UI FIXED SERIAMENTE
+// MINI TRELLO — UI SERIA E USABILE
 import { useEffect, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -9,9 +9,9 @@ import { format, parseISO } from "date-fns";
 const teamMembers = ["Nicola", "Andrea", "Mirko", "Georgina"];
 const tagOptions = ["Urgente", "Normale", "Bassa Priorità"];
 const tagColors = {
-  Urgente: "bg-red-200 text-red-800",
-  Normale: "bg-yellow-200 text-yellow-800",
-  "Bassa Priorità": "bg-green-200 text-green-800"
+  Urgente: "bg-red-100 text-red-800 border border-red-300",
+  Normale: "bg-yellow-100 text-yellow-800 border border-yellow-300",
+  "Bassa Priorità": "bg-green-100 text-green-800 border border-green-300"
 };
 
 const loadFromStorage = () => {
@@ -80,17 +80,18 @@ export default function TrelloApp() {
   };
 
   return (
-    <div className="p-4 max-w-screen-xl mx-auto space-y-8">
-      <div className="bg-white p-6 rounded-xl shadow-lg flex flex-col space-y-4 relative z-10">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+    <div className="p-6 max-w-screen-2xl mx-auto space-y-10 bg-gray-100 min-h-screen">
+      <div className="bg-white p-6 rounded-2xl shadow-xl space-y-6">
+        <h1 className="text-2xl font-bold text-center text-gray-800">📋 Mini Trello</h1>
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
           <Input placeholder="Titolo" value={newTitle} onChange={(e) => setNewTitle(e.target.value)} />
           <Input type="date" value={newDueDate} onChange={(e) => setNewDueDate(e.target.value)} />
           <Select value={newTag} onValueChange={setNewTag}>
-            <SelectTrigger><SelectValue placeholder="Priorità" /></SelectTrigger>
+            <SelectTrigger className="w-full"><SelectValue placeholder="Priorità" /></SelectTrigger>
             <SelectContent>{tagOptions.map(t => <SelectItem key={t} value={t}>{t}</SelectItem>)}</SelectContent>
           </Select>
           <Select value={newAssignee} onValueChange={setNewAssignee}>
-            <SelectTrigger><SelectValue placeholder="Assegna a" /></SelectTrigger>
+            <SelectTrigger className="w-full"><SelectValue placeholder="Assegna a" /></SelectTrigger>
             <SelectContent>{teamMembers.map(m => <SelectItem key={m} value={m}>{m}</SelectItem>)}</SelectContent>
           </Select>
         </div>
@@ -98,7 +99,7 @@ export default function TrelloApp() {
         <Button className="w-full sm:w-fit self-end" onClick={addTask}>➕ Aggiungi Task</Button>
         <div className="pt-4">
           <Select onValueChange={filterBy} defaultValue="">
-            <SelectTrigger><SelectValue placeholder="🔍 Filtra per persona" /></SelectTrigger>
+            <SelectTrigger className="w-full md:w-64"><SelectValue placeholder="🔍 Filtra per persona" /></SelectTrigger>
             <SelectContent>{teamMembers.map(m => <SelectItem key={m} value={m}>{m}</SelectItem>)}</SelectContent>
           </Select>
         </div>
@@ -106,14 +107,14 @@ export default function TrelloApp() {
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {Object.entries(columns).map(([colName, tasks]) => (
-          <div key={colName} className="bg-gray-50 p-4 rounded-xl shadow-md space-y-4 min-h-[200px]">
+          <div key={colName} className="bg-white p-4 rounded-xl shadow-md space-y-4 min-h-[200px]">
             <h2 className="text-lg font-bold text-center text-gray-700 border-b pb-2">{colName}</h2>
             {tasks.length === 0 && <p className="text-sm text-center text-gray-400">Nessun task</p>}
             {tasks.map((task, index) => (
               <Card key={task.id} className="bg-white border border-gray-200">
                 <CardContent className="p-4 space-y-2">
                   <div className="flex justify-between items-center">
-                    <h3 className="text-base font-semibold truncate max-w-[70%]">{task.title}</h3>
+                    <h3 className="text-base font-semibold truncate max-w-[60%]">{task.title}</h3>
                     <span className={`text-xs px-2 py-1 rounded-full ${tagColors[task.tag]}`}>{task.tag}</span>
                   </div>
                   {task.description && <p className="text-sm text-gray-600 line-clamp-3">{task.description}</p>}
@@ -133,4 +134,3 @@ export default function TrelloApp() {
     </div>
   );
 }
-
