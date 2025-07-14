@@ -1,8 +1,5 @@
-// MINI TRELLO — VERSIONE FUNZIONANTE CON SELECT HTML
-import { useEffect, useState } from "react";
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+// MINI TRELLO — VERSIONE CON ELEMENTI HTML STANDARD
+import { useState, useEffect } from "react";
 import { format, parseISO } from "date-fns";
 
 const teamMembers = ["Nicola", "Andrea", "Mirko", "Georgina"];
@@ -85,9 +82,10 @@ export default function TrelloApp() {
     <div className="p-6 max-w-screen-2xl mx-auto space-y-10 bg-gray-100 min-h-screen">
       <div className="bg-white p-6 rounded-2xl shadow-xl space-y-6">
         <h1 className="text-2xl font-bold text-center text-gray-800">📋 Mini Trello</h1>
+
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
-          <Input placeholder="Titolo" value={newTitle} onChange={(e) => setNewTitle(e.target.value)} />
-          <Input type="date" value={newDueDate} onChange={(e) => setNewDueDate(e.target.value)} />
+          <input type="text" placeholder="Titolo" className="w-full border rounded px-3 py-2" value={newTitle} onChange={(e) => setNewTitle(e.target.value)} />
+          <input type="date" className="w-full border rounded px-3 py-2" value={newDueDate} onChange={(e) => setNewDueDate(e.target.value)} />
 
           <select className="w-full border rounded px-3 py-2" value={newTag} onChange={(e) => setNewTag(e.target.value)}>
             <option value="">Priorità</option>
@@ -104,8 +102,9 @@ export default function TrelloApp() {
           </select>
         </div>
 
-        <Input placeholder="Descrizione" value={newDescription} onChange={(e) => setNewDescription(e.target.value)} />
-        <Button className="w-full sm:w-fit self-end" onClick={addTask}>➕ Aggiungi Task</Button>
+        <textarea placeholder="Descrizione" className="w-full border rounded px-3 py-2" value={newDescription} onChange={(e) => setNewDescription(e.target.value)} />
+
+        <button className="w-full sm:w-fit bg-blue-600 text-white px-4 py-2 rounded" onClick={addTask}>➕ Aggiungi Task</button>
 
         <div className="pt-4">
           <select className="w-full md:w-64 border rounded px-3 py-2" onChange={(e) => filterBy(e.target.value)}>
@@ -123,22 +122,20 @@ export default function TrelloApp() {
             <h2 className="text-lg font-bold text-center text-gray-700 border-b pb-2">{colName}</h2>
             {tasks.length === 0 && <p className="text-sm text-center text-gray-400">Nessun task</p>}
             {tasks.map((task, index) => (
-              <Card key={task.id} className="bg-white border border-gray-200">
-                <CardContent className="p-4 space-y-2">
-                  <div className="flex justify-between items-center">
-                    <h3 className="text-base font-semibold truncate max-w-[60%]">{task.title}</h3>
-                    <span className={`text-xs px-2 py-1 rounded-full ${tagColors[task.tag]}`}>{task.tag}</span>
-                  </div>
-                  {task.description && <p className="text-sm text-gray-600 line-clamp-3">{task.description}</p>}
-                  <p className="text-sm italic text-gray-500">👤 {task.assignedTo}</p>
-                  {task.dueDate && <p className="text-sm">📅 {format(parseISO(task.dueDate), "dd/MM/yyyy")}</p>}
-                  <div className="flex justify-end gap-2 pt-2">
-                    <Button variant="outline" size="sm" onClick={() => moveCard(colName, "In Progress", index)}>➡️</Button>
-                    <Button variant="outline" size="sm" onClick={() => moveCard(colName, "Done", index)}>✅</Button>
-                    <Button variant="outline" size="sm" onClick={() => deleteCard(colName, index)}>🗑️</Button>
-                  </div>
-                </CardContent>
-              </Card>
+              <div key={task.id} className="bg-white border border-gray-200 p-4 space-y-2 rounded">
+                <div className="flex justify-between items-center">
+                  <h3 className="text-base font-semibold truncate max-w-[60%]">{task.title}</h3>
+                  <span className={`text-xs px-2 py-1 rounded-full ${tagColors[task.tag]}`}>{task.tag}</span>
+                </div>
+                {task.description && <p className="text-sm text-gray-600 line-clamp-3">{task.description}</p>}
+                <p className="text-sm italic text-gray-500">👤 {task.assignedTo}</p>
+                {task.dueDate && <p className="text-sm">📅 {format(parseISO(task.dueDate), "dd/MM/yyyy")}</p>}
+                <div className="flex justify-end gap-2 pt-2">
+                  <button className="text-sm px-2 py-1 border rounded" onClick={() => moveCard(colName, "In Progress", index)}>➡️</button>
+                  <button className="text-sm px-2 py-1 border rounded" onClick={() => moveCard(colName, "Done", index)}>✅</button>
+                  <button className="text-sm px-2 py-1 border rounded" onClick={() => deleteCard(colName, index)}>🗑️</button>
+                </div>
+              </div>
             ))}
           </div>
         ))}
