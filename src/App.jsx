@@ -1,18 +1,16 @@
-// MIGLIORAMENTI GRAFICI + UX/UI
+// MINI TRELLO - MIGLIORATO UI/UX + STILE VISIVO
 import { useEffect, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Dialog, DialogTrigger, DialogContent } from "@/components/ui/dialog";
-import { Label } from "@/components/ui/label";
-import { format, parseISO, startOfWeek, addDays, isSameDay } from "date-fns";
+import { format, parseISO, startOfWeek, addDays } from "date-fns";
 
 const teamMembers = ["Nicola", "Andrea", "Mirko", "Georgina"];
 const tagOptions = ["Urgente", "Normale", "Bassa Priorità"];
 const tagColors = {
-  "Urgente": "bg-red-200 text-red-800",
-  "Normale": "bg-yellow-200 text-yellow-800",
+  Urgente: "bg-red-200 text-red-800",
+  Normale: "bg-yellow-200 text-yellow-800",
   "Bassa Priorità": "bg-green-200 text-green-800"
 };
 
@@ -32,30 +30,10 @@ export default function TrelloApp() {
   const [newDueDate, setNewDueDate] = useState("");
   const [newDescription, setNewDescription] = useState("");
   const [newTag, setNewTag] = useState("");
-  const [editTask, setEditTask] = useState(null);
-  const [editTitle, setEditTitle] = useState("");
-  const [editAssignee, setEditAssignee] = useState("");
-  const [editDueDate, setEditDueDate] = useState("");
-  const [editDescription, setEditDescription] = useState("");
-  const [editTag, setEditTag] = useState("");
 
   useEffect(() => {
     localStorage.setItem("taskColumns", JSON.stringify(columns));
   }, [columns]);
-
-  const moveCard = (from, to, cardIndex) => {
-    const fromCol = [...columns[from]];
-    const toCol = [...columns[to]];
-    const [moved] = fromCol.splice(cardIndex, 1);
-    toCol.push(moved);
-    setColumns({ ...columns, [from]: fromCol, [to]: toCol });
-  };
-
-  const deleteCard = (col, cardIndex) => {
-    const colCopy = [...columns[col]];
-    colCopy.splice(cardIndex, 1);
-    setColumns({ ...columns, [col]: colCopy });
-  };
 
   const addTask = () => {
     if (!newTitle.trim() || !newAssignee || !newTag) return;
@@ -78,6 +56,20 @@ export default function TrelloApp() {
     setNewTag("");
   };
 
+  const moveCard = (from, to, cardIndex) => {
+    const fromCol = [...columns[from]];
+    const toCol = [...columns[to]];
+    const [moved] = fromCol.splice(cardIndex, 1);
+    toCol.push(moved);
+    setColumns({ ...columns, [from]: fromCol, [to]: toCol });
+  };
+
+  const deleteCard = (col, cardIndex) => {
+    const colCopy = [...columns[col]];
+    colCopy.splice(cardIndex, 1);
+    setColumns({ ...columns, [col]: colCopy });
+  };
+
   const filterBy = (name) => {
     const filtered = loadFromStorage();
     const result = {};
@@ -87,43 +79,14 @@ export default function TrelloApp() {
     setColumns(result);
   };
 
-  const openEdit = (col, idx) => {
-    const task = columns[col][idx];
-    setEditTask({ col, idx });
-    setEditTitle(task.title);
-    setEditAssignee(task.assignedTo);
-    setEditDueDate(task.dueDate || "");
-    setEditDescription(task.description || "");
-    setEditTag(task.tag || "");
-  };
-
-  const saveEdit = () => {
-    const colCopy = [...columns[editTask.col]];
-    colCopy[editTask.idx] = {
-      ...colCopy[editTask.idx],
-      title: editTitle,
-      assignedTo: editAssignee,
-      dueDate: editDueDate,
-      description: editDescription,
-      tag: editTag
-    };
-    setColumns({ ...columns, [editTask.col]: colCopy });
-    setEditTask(null);
-  };
-
-  const today = new Date();
-  const weekDays = Array.from({ length: 7 }, (_, i) => addDays(startOfWeek(today, { weekStartsOn: 1 }), i));
-  const allTasks = Object.values(columns).flat();
-
   return (
-    <div className="p-4 space-y-10 max-w-screen-xl mx-auto">
-      {/* Form migliorato con griglia leggibile */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-start">
-        <div className="space-y-3">
+    <div className="p-4 max-w-screen-xl mx-auto space-y-10">
+      <div className="bg-white p-6 rounded-xl shadow-lg grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="space-y-2">
           <Input placeholder="Titolo del task" value={newTitle} onChange={(e) => setNewTitle(e.target.value)} />
           <Input placeholder="Descrizione" value={newDescription} onChange={(e) => setNewDescription(e.target.value)} />
         </div>
-        <div className="space-y-3">
+        <div className="space-y-2">
           <Input type="date" value={newDueDate} onChange={(e) => setNewDueDate(e.target.value)} />
           <Select value={newTag} onValueChange={setNewTag}>
             <SelectTrigger><SelectValue placeholder="Priorità" /></SelectTrigger>
@@ -132,16 +95,16 @@ export default function TrelloApp() {
             </SelectContent>
           </Select>
         </div>
-        <div className="space-y-3">
+        <div className="space-y-2">
           <Select value={newAssignee} onValueChange={setNewAssignee}>
             <SelectTrigger><SelectValue placeholder="Assegna a" /></SelectTrigger>
             <SelectContent>
               {teamMembers.map((m) => <SelectItem key={m} value={m}>{m}</SelectItem>)}
             </SelectContent>
           </Select>
-          <Button onClick={addTask} className="w-full">➕ Aggiungi Task</Button>
+          <Button className="w-full" onClick={addTask}>➕ Aggiungi Task</Button>
         </div>
-        <div className="md:col-span-3">
+        <div className="col-span-1 md:col-span-3">
           <Select onValueChange={filterBy} defaultValue="">
             <SelectTrigger><SelectValue placeholder="🔍 Filtra per persona" /></SelectTrigger>
             <SelectContent>
@@ -151,26 +114,25 @@ export default function TrelloApp() {
         </div>
       </div>
 
-      {/* Colonne dei task */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {Object.entries(columns).map(([colName, tasks]) => (
-          <div key={colName} className="space-y-4">
-            <h2 className="text-xl font-bold">{colName}</h2>
+          <div key={colName} className="bg-gray-50 p-4 rounded-xl shadow-md space-y-4">
+            <h2 className="text-lg font-bold text-center text-gray-700 border-b pb-2">{colName}</h2>
+            {tasks.length === 0 && <p className="text-sm text-center text-gray-400">Nessun task</p>}
             {tasks.map((task, index) => (
-              <Card key={task.id} className="shadow-md">
+              <Card key={task.id} className="bg-white border border-gray-200">
                 <CardContent className="p-4 space-y-2">
-                  <div className="flex justify-between">
-                    <h3 className="font-semibold text-lg">{task.title}</h3>
+                  <div className="flex justify-between items-center">
+                    <h3 className="text-base font-semibold">{task.title}</h3>
                     <span className={`text-xs px-2 py-1 rounded-full ${tagColors[task.tag]}`}>{task.tag}</span>
                   </div>
-                  <p className="text-sm text-gray-600">{task.description}</p>
-                  <p className="text-sm italic text-gray-500">Assegnato a: {task.assignedTo}</p>
+                  {task.description && <p className="text-sm text-gray-600">{task.description}</p>}
+                  <p className="text-sm italic text-gray-500">👤 {task.assignedTo}</p>
                   {task.dueDate && <p className="text-sm">📅 {format(parseISO(task.dueDate), "dd/MM/yyyy")}</p>}
-                  <div className="flex gap-2 pt-2">
+                  <div className="flex justify-end gap-2 pt-2">
                     <Button variant="outline" size="sm" onClick={() => moveCard(colName, "In Progress", index)}>➡️</Button>
                     <Button variant="outline" size="sm" onClick={() => moveCard(colName, "Done", index)}>✅</Button>
-                    <Button variant="outline" size="sm" onClick={() => openEdit(colName, index)}>✏️</Button>
-                    <Button variant="destructive" size="sm" onClick={() => deleteCard(colName, index)}>🗑️</Button>
+                    <Button variant="outline" size="sm" onClick={() => deleteCard(colName, index)}>🗑️</Button>
                   </div>
                 </CardContent>
               </Card>
