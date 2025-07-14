@@ -1,4 +1,4 @@
-// MINI TRELLO — UI SERIA E USABILE
+// MINI TRELLO — UI SERIA E USABILE (FIX TASK E SELECT)
 import { useEffect, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -30,13 +30,17 @@ export default function TrelloApp() {
   const [newDueDate, setNewDueDate] = useState("");
   const [newDescription, setNewDescription] = useState("");
   const [newTag, setNewTag] = useState("");
+  const [selectKey, setSelectKey] = useState(Date.now());
 
   useEffect(() => {
     localStorage.setItem("taskColumns", JSON.stringify(columns));
   }, [columns]);
 
   const addTask = () => {
-    if (!newTitle.trim() || !newAssignee || !newTag) return;
+    if (!newTitle.trim() || !newAssignee || !newTag) {
+      alert("Compila tutti i campi obbligatori");
+      return;
+    }
     const newTask = {
       id: Date.now(),
       title: newTitle,
@@ -54,6 +58,7 @@ export default function TrelloApp() {
     setNewDueDate("");
     setNewDescription("");
     setNewTag("");
+    setSelectKey(Date.now());
   };
 
   const moveCard = (from, to, cardIndex) => {
@@ -86,11 +91,11 @@ export default function TrelloApp() {
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
           <Input placeholder="Titolo" value={newTitle} onChange={(e) => setNewTitle(e.target.value)} />
           <Input type="date" value={newDueDate} onChange={(e) => setNewDueDate(e.target.value)} />
-          <Select value={newTag} onValueChange={setNewTag}>
+          <Select key={`tag-${selectKey}`} value={newTag} onValueChange={setNewTag}>
             <SelectTrigger className="w-full"><SelectValue placeholder="Priorità" /></SelectTrigger>
             <SelectContent>{tagOptions.map(t => <SelectItem key={t} value={t}>{t}</SelectItem>)}</SelectContent>
           </Select>
-          <Select value={newAssignee} onValueChange={setNewAssignee}>
+          <Select key={`assignee-${selectKey}`} value={newAssignee} onValueChange={setNewAssignee}>
             <SelectTrigger className="w-full"><SelectValue placeholder="Assegna a" /></SelectTrigger>
             <SelectContent>{teamMembers.map(m => <SelectItem key={m} value={m}>{m}</SelectItem>)}</SelectContent>
           </Select>
