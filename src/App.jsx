@@ -1,4 +1,4 @@
-// MINI TRELLO - FIX UI BREAK & UX MIGLIORATO
+// MINI TRELLO - UI FIXED SERIAMENTE
 import { useEffect, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -80,59 +80,43 @@ export default function TrelloApp() {
   };
 
   return (
-    <div className="p-4 max-w-screen-xl mx-auto space-y-10">
-      <div className="bg-white p-6 rounded-xl shadow-lg grid grid-cols-1 lg:grid-cols-3 gap-6 relative z-10">
-        <div className="space-y-2 z-10">
-          <Input placeholder="Titolo del task" value={newTitle} onChange={(e) => setNewTitle(e.target.value)} />
-          <Input placeholder="Descrizione" value={newDescription} onChange={(e) => setNewDescription(e.target.value)} />
-        </div>
-        <div className="space-y-2 z-10">
+    <div className="p-4 max-w-screen-xl mx-auto space-y-8">
+      <div className="bg-white p-6 rounded-xl shadow-lg flex flex-col space-y-4 relative z-10">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <Input placeholder="Titolo" value={newTitle} onChange={(e) => setNewTitle(e.target.value)} />
           <Input type="date" value={newDueDate} onChange={(e) => setNewDueDate(e.target.value)} />
-          <div className="relative z-20">
-            <Select value={newTag} onValueChange={setNewTag}>
-              <SelectTrigger><SelectValue placeholder="Priorità" /></SelectTrigger>
-              <SelectContent className="z-50">
-                {tagOptions.map((t) => <SelectItem key={t} value={t}>{t}</SelectItem>)}
-              </SelectContent>
-            </Select>
-          </div>
+          <Select value={newTag} onValueChange={setNewTag}>
+            <SelectTrigger><SelectValue placeholder="Priorità" /></SelectTrigger>
+            <SelectContent>{tagOptions.map(t => <SelectItem key={t} value={t}>{t}</SelectItem>)}</SelectContent>
+          </Select>
+          <Select value={newAssignee} onValueChange={setNewAssignee}>
+            <SelectTrigger><SelectValue placeholder="Assegna a" /></SelectTrigger>
+            <SelectContent>{teamMembers.map(m => <SelectItem key={m} value={m}>{m}</SelectItem>)}</SelectContent>
+          </Select>
         </div>
-        <div className="space-y-2 z-10">
-          <div className="relative z-20">
-            <Select value={newAssignee} onValueChange={setNewAssignee}>
-              <SelectTrigger><SelectValue placeholder="Assegna a" /></SelectTrigger>
-              <SelectContent className="z-50">
-                {teamMembers.map((m) => <SelectItem key={m} value={m}>{m}</SelectItem>)}
-              </SelectContent>
-            </Select>
-          </div>
-          <Button className="w-full" onClick={addTask}>➕ Aggiungi Task</Button>
-        </div>
-        <div className="col-span-1 lg:col-span-3 z-10">
-          <div className="relative z-20">
-            <Select onValueChange={filterBy} defaultValue="">
-              <SelectTrigger><SelectValue placeholder="🔍 Filtra per persona" /></SelectTrigger>
-              <SelectContent className="z-50">
-                {teamMembers.map((m) => <SelectItem key={m} value={m}>{m}</SelectItem>)}
-              </SelectContent>
-            </Select>
-          </div>
+        <Input placeholder="Descrizione" value={newDescription} onChange={(e) => setNewDescription(e.target.value)} />
+        <Button className="w-full sm:w-fit self-end" onClick={addTask}>➕ Aggiungi Task</Button>
+        <div className="pt-4">
+          <Select onValueChange={filterBy} defaultValue="">
+            <SelectTrigger><SelectValue placeholder="🔍 Filtra per persona" /></SelectTrigger>
+            <SelectContent>{teamMembers.map(m => <SelectItem key={m} value={m}>{m}</SelectItem>)}</SelectContent>
+          </Select>
         </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {Object.entries(columns).map(([colName, tasks]) => (
-          <div key={colName} className="bg-gray-50 p-4 rounded-xl shadow-md space-y-4">
+          <div key={colName} className="bg-gray-50 p-4 rounded-xl shadow-md space-y-4 min-h-[200px]">
             <h2 className="text-lg font-bold text-center text-gray-700 border-b pb-2">{colName}</h2>
             {tasks.length === 0 && <p className="text-sm text-center text-gray-400">Nessun task</p>}
             {tasks.map((task, index) => (
               <Card key={task.id} className="bg-white border border-gray-200">
                 <CardContent className="p-4 space-y-2">
                   <div className="flex justify-between items-center">
-                    <h3 className="text-base font-semibold">{task.title}</h3>
+                    <h3 className="text-base font-semibold truncate max-w-[70%]">{task.title}</h3>
                     <span className={`text-xs px-2 py-1 rounded-full ${tagColors[task.tag]}`}>{task.tag}</span>
                   </div>
-                  {task.description && <p className="text-sm text-gray-600">{task.description}</p>}
+                  {task.description && <p className="text-sm text-gray-600 line-clamp-3">{task.description}</p>}
                   <p className="text-sm italic text-gray-500">👤 {task.assignedTo}</p>
                   {task.dueDate && <p className="text-sm">📅 {format(parseISO(task.dueDate), "dd/MM/yyyy")}</p>}
                   <div className="flex justify-end gap-2 pt-2">
