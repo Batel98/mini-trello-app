@@ -1,9 +1,8 @@
-// MINI TRELLO — UI SERIA E USABILE (FIX TASK E SELECT)
+// MINI TRELLO — VERSIONE FUNZIONANTE CON SELECT HTML
 import { useEffect, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { format, parseISO } from "date-fns";
 
 const teamMembers = ["Nicola", "Andrea", "Mirko", "Georgina"];
@@ -30,7 +29,6 @@ export default function TrelloApp() {
   const [newDueDate, setNewDueDate] = useState("");
   const [newDescription, setNewDescription] = useState("");
   const [newTag, setNewTag] = useState("");
-  const [selectKey, setSelectKey] = useState(Date.now());
 
   useEffect(() => {
     localStorage.setItem("taskColumns", JSON.stringify(columns));
@@ -58,7 +56,6 @@ export default function TrelloApp() {
     setNewDueDate("");
     setNewDescription("");
     setNewTag("");
-    setSelectKey(Date.now());
   };
 
   const moveCard = (from, to, cardIndex) => {
@@ -91,22 +88,32 @@ export default function TrelloApp() {
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
           <Input placeholder="Titolo" value={newTitle} onChange={(e) => setNewTitle(e.target.value)} />
           <Input type="date" value={newDueDate} onChange={(e) => setNewDueDate(e.target.value)} />
-          <Select key={`tag-${selectKey}`} value={newTag} onValueChange={setNewTag}>
-            <SelectTrigger className="w-full"><SelectValue placeholder="Priorità" /></SelectTrigger>
-            <SelectContent>{tagOptions.map(t => <SelectItem key={t} value={t}>{t}</SelectItem>)}</SelectContent>
-          </Select>
-          <Select key={`assignee-${selectKey}`} value={newAssignee} onValueChange={setNewAssignee}>
-            <SelectTrigger className="w-full"><SelectValue placeholder="Assegna a" /></SelectTrigger>
-            <SelectContent>{teamMembers.map(m => <SelectItem key={m} value={m}>{m}</SelectItem>)}</SelectContent>
-          </Select>
+
+          <select className="w-full border rounded px-3 py-2" value={newTag} onChange={(e) => setNewTag(e.target.value)}>
+            <option value="">Priorità</option>
+            {tagOptions.map((tag) => (
+              <option key={tag} value={tag}>{tag}</option>
+            ))}
+          </select>
+
+          <select className="w-full border rounded px-3 py-2" value={newAssignee} onChange={(e) => setNewAssignee(e.target.value)}>
+            <option value="">Assegna a</option>
+            {teamMembers.map((member) => (
+              <option key={member} value={member}>{member}</option>
+            ))}
+          </select>
         </div>
+
         <Input placeholder="Descrizione" value={newDescription} onChange={(e) => setNewDescription(e.target.value)} />
         <Button className="w-full sm:w-fit self-end" onClick={addTask}>➕ Aggiungi Task</Button>
+
         <div className="pt-4">
-          <Select onValueChange={filterBy} defaultValue="">
-            <SelectTrigger className="w-full md:w-64"><SelectValue placeholder="🔍 Filtra per persona" /></SelectTrigger>
-            <SelectContent>{teamMembers.map(m => <SelectItem key={m} value={m}>{m}</SelectItem>)}</SelectContent>
-          </Select>
+          <select className="w-full md:w-64 border rounded px-3 py-2" onChange={(e) => filterBy(e.target.value)}>
+            <option value="">🔍 Filtra per persona</option>
+            {teamMembers.map((m) => (
+              <option key={m} value={m}>{m}</option>
+            ))}
+          </select>
         </div>
       </div>
 
