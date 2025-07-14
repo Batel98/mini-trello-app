@@ -1,10 +1,10 @@
-// MINI TRELLO - MIGLIORATO UI/UX + STILE VISIVO
+// MINI TRELLO - FIX UI BREAK & UX MIGLIORATO
 import { useEffect, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { format, parseISO, startOfWeek, addDays } from "date-fns";
+import { format, parseISO } from "date-fns";
 
 const teamMembers = ["Nicola", "Andrea", "Mirko", "Georgina"];
 const tagOptions = ["Urgente", "Normale", "Bassa Priorità"];
@@ -45,10 +45,10 @@ export default function TrelloApp() {
       description: newDescription,
       tag: newTag
     };
-    setColumns({
-      ...columns,
-      "To Do": [...columns["To Do"], newTask]
-    });
+    setColumns(prev => ({
+      ...prev,
+      "To Do": [...prev["To Do"], newTask]
+    }));
     setNewTitle("");
     setNewAssignee("");
     setNewDueDate("");
@@ -81,36 +81,42 @@ export default function TrelloApp() {
 
   return (
     <div className="p-4 max-w-screen-xl mx-auto space-y-10">
-      <div className="bg-white p-6 rounded-xl shadow-lg grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="space-y-2">
+      <div className="bg-white p-6 rounded-xl shadow-lg grid grid-cols-1 lg:grid-cols-3 gap-6 relative z-10">
+        <div className="space-y-2 z-10">
           <Input placeholder="Titolo del task" value={newTitle} onChange={(e) => setNewTitle(e.target.value)} />
           <Input placeholder="Descrizione" value={newDescription} onChange={(e) => setNewDescription(e.target.value)} />
         </div>
-        <div className="space-y-2">
+        <div className="space-y-2 z-10">
           <Input type="date" value={newDueDate} onChange={(e) => setNewDueDate(e.target.value)} />
-          <Select value={newTag} onValueChange={setNewTag}>
-            <SelectTrigger><SelectValue placeholder="Priorità" /></SelectTrigger>
-            <SelectContent>
-              {tagOptions.map((t) => <SelectItem key={t} value={t}>{t}</SelectItem>)}
-            </SelectContent>
-          </Select>
+          <div className="relative z-20">
+            <Select value={newTag} onValueChange={setNewTag}>
+              <SelectTrigger><SelectValue placeholder="Priorità" /></SelectTrigger>
+              <SelectContent className="z-50">
+                {tagOptions.map((t) => <SelectItem key={t} value={t}>{t}</SelectItem>)}
+              </SelectContent>
+            </Select>
+          </div>
         </div>
-        <div className="space-y-2">
-          <Select value={newAssignee} onValueChange={setNewAssignee}>
-            <SelectTrigger><SelectValue placeholder="Assegna a" /></SelectTrigger>
-            <SelectContent>
-              {teamMembers.map((m) => <SelectItem key={m} value={m}>{m}</SelectItem>)}
-            </SelectContent>
-          </Select>
+        <div className="space-y-2 z-10">
+          <div className="relative z-20">
+            <Select value={newAssignee} onValueChange={setNewAssignee}>
+              <SelectTrigger><SelectValue placeholder="Assegna a" /></SelectTrigger>
+              <SelectContent className="z-50">
+                {teamMembers.map((m) => <SelectItem key={m} value={m}>{m}</SelectItem>)}
+              </SelectContent>
+            </Select>
+          </div>
           <Button className="w-full" onClick={addTask}>➕ Aggiungi Task</Button>
         </div>
-        <div className="col-span-1 md:col-span-3">
-          <Select onValueChange={filterBy} defaultValue="">
-            <SelectTrigger><SelectValue placeholder="🔍 Filtra per persona" /></SelectTrigger>
-            <SelectContent>
-              {teamMembers.map((m) => <SelectItem key={m} value={m}>{m}</SelectItem>)}
-            </SelectContent>
-          </Select>
+        <div className="col-span-1 lg:col-span-3 z-10">
+          <div className="relative z-20">
+            <Select onValueChange={filterBy} defaultValue="">
+              <SelectTrigger><SelectValue placeholder="🔍 Filtra per persona" /></SelectTrigger>
+              <SelectContent className="z-50">
+                {teamMembers.map((m) => <SelectItem key={m} value={m}>{m}</SelectItem>)}
+              </SelectContent>
+            </Select>
+          </div>
         </div>
       </div>
 
@@ -143,3 +149,4 @@ export default function TrelloApp() {
     </div>
   );
 }
+
