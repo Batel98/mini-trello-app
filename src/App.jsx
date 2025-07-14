@@ -7,7 +7,7 @@ import { Dialog, DialogTrigger, DialogContent } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { format, parseISO, startOfWeek, addDays, isSameDay } from "date-fns";
 
-const teamMembers = ["Nicola", "Marco", "Giulia", "Luca"];
+const teamMembers = ["Nicola", "Andrea", "Mirko", "Georgina"];
 const tagOptions = ["Urgente", "Normale", "Bassa Priorità"];
 const tagColors = {
   "Urgente": "bg-red-200 text-red-800",
@@ -115,11 +115,12 @@ export default function TrelloApp() {
 
   return (
     <div className="p-4 space-y-6">
-      <div className="flex space-x-2">
+      <div className="flex flex-wrap gap-2">
         <Input
           placeholder="Titolo del task"
           value={newTitle}
           onChange={(e) => setNewTitle(e.target.value)}
+          className="flex-1 min-w-[150px]"
         />
         <Select value={newAssignee} onValueChange={setNewAssignee}>
           <SelectTrigger className="w-[150px]">
@@ -135,11 +136,13 @@ export default function TrelloApp() {
           type="date"
           value={newDueDate}
           onChange={(e) => setNewDueDate(e.target.value)}
+          className="min-w-[150px]"
         />
         <Input
           placeholder="Descrizione"
           value={newDescription}
           onChange={(e) => setNewDescription(e.target.value)}
+          className="flex-1 min-w-[150px]"
         />
         <Select value={newTag} onValueChange={setNewTag}>
           <SelectTrigger className="w-[160px]">
@@ -164,27 +167,27 @@ export default function TrelloApp() {
         </Select>
       </div>
 
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {Object.keys(columns).map((col) => (
           <div key={col} className="bg-gray-100 rounded-xl p-2 shadow">
-            <h2 className="text-xl font-bold mb-2">{col}</h2>
+            <h2 className="text-xl font-bold mb-2 text-center">{col}</h2>
             {columns[col].map((card, idx) => (
               <Card key={card.id} className="mb-2">
-                <CardContent className="p-3">
-                  <p className="font-semibold flex justify-between">
-                    {card.title}
+                <CardContent className="p-3 space-y-2">
+                  <div className="flex justify-between items-center">
+                    <p className="font-semibold">{card.title}</p>
                     {card.tag && (
                       <span className={`text-xs px-2 py-1 rounded ${tagColors[card.tag]}`}>{card.tag}</span>
                     )}
-                  </p>
+                  </div>
                   <p className="text-sm text-gray-500">Assegnato a: {card.assignedTo}</p>
                   {card.dueDate && (
                     <p className="text-sm text-gray-500">Scadenza: {card.dueDate}</p>
                   )}
                   {card.description && (
-                    <p className="text-sm text-gray-600 mt-1">{card.description}</p>
+                    <p className="text-sm text-gray-600">{card.description}</p>
                   )}
-                  <div className="mt-2 space-x-2">
+                  <div className="flex flex-wrap gap-2">
                     {Object.keys(columns)
                       .filter((target) => target !== col)
                       .map((target) => (
@@ -255,7 +258,7 @@ export default function TrelloApp() {
 
       <div className="mt-10">
         <h2 className="text-xl font-bold mb-4">Timeline Settimanale</h2>
-        <div className="grid grid-cols-7 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-7 gap-4">
           {weekDays.map((day, i) => (
             <div key={i} className="bg-slate-100 p-3 rounded shadow">
               <p className="font-bold text-center">{format(day, "EEEE dd/MM")}</p>
@@ -272,3 +275,4 @@ export default function TrelloApp() {
     </div>
   );
 }
+
